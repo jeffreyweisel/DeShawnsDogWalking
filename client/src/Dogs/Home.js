@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { getDogs } from "../Services/DogService";
 import "./Dogs.css";
+import { Link } from "react-router-dom";
 
-export const DogList = () => {
+export const Home = () => {
   const [dogs, setDogs] = useState([]);
 
   useEffect(() => {
@@ -16,7 +17,9 @@ export const DogList = () => {
       <div className="card-list">
         {dogs.map((d) => (
           <div key={d.id} className="card">
-            <h3>{d.name}</h3>
+           <Link to={`/details/${d.id}`}>
+           <h3>{d.name}</h3>
+            </Link> 
           </div>
         ))}
       </div>
