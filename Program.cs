@@ -5,18 +5,18 @@ using DeShawnsDogWalking.Models.DTOs;
 // List of dogs
 List<Dog> dogs = new()
 {
-    new() { Id = 1, Name = "Baker", CityId = 1, WalkerId = 1},
-    new() { Id = 2, Name = "Boomer", CityId = 2, WalkerId = 2},
-    new() { Id = 3, Name = "Max", CityId = 3, WalkerId = 3},
-    new() { Id = 4, Name = "Molly", CityId = 4, WalkerId = 4},
-    new() { Id = 5, Name = "Baxter", CityId = 4, WalkerId = 5},
-    new() { Id = 6, Name = "Annie", CityId = 2, WalkerId = 6},
-    new() { Id = 7, Name = "Bella", CityId = 3, WalkerId = 1},
-    new() { Id = 8, Name = "Cash", CityId = 1, WalkerId = 2},
-    new() { Id = 9, Name = "Milo", CityId = 4, WalkerId = 7},
-    new() { Id = 10, Name = "Bear", CityId = 1, WalkerId = 6},
-    new() { Id = 11, Name = "Manny", CityId = 2, WalkerId = 3},
-    new() { Id = 12, Name = "Coco", CityId = 1, WalkerId = 2 }
+    new() { Id = 1, Name = "Baker", CityId = 1 },
+    new() { Id = 2, Name = "Boomer", CityId = 2, WalkerId = 2 },
+    new() { Id = 3, Name = "Max", CityId = 3, WalkerId = 3 },
+    new() { Id = 4, Name = "Molly", CityId = 4, WalkerId = 4 },
+    new() { Id = 5, Name = "Baxter", CityId = 4 },
+    new() { Id = 6, Name = "Annie", CityId = 2, WalkerId = 6 },
+    new() { Id = 7, Name = "Bella", CityId = 3, WalkerId = 1 },
+    new() { Id = 8, Name = "Cash", CityId = 1, WalkerId = 2 },
+    new() { Id = 9, Name = "Milo", CityId = 4, WalkerId = 7 },
+    new() { Id = 10, Name = "Bear", CityId = 1, WalkerId = 6 },
+    new() { Id = 11, Name = "Manny", CityId = 2, WalkerId = 3 },
+    new() { Id = 12, Name = "Coco", CityId = 1}
 };
 
 // List of walkers
