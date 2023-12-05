@@ -72,6 +72,16 @@ app.MapGet("/api/hello", () =>
     return new { Message = "Welcome to DeShawn's Dog Walking" };
 });
 
+// Get cities
+app.MapGet("/api/cities", () =>
+{
+    return cities.Select(c => new CityDTO
+    {
+        Id = c.Id,
+        Name = c.Name
+    });
+});
+
 // Get all dogs with properties fully expanded
 app.MapGet("/api/dogs", () =>
 {
@@ -80,7 +90,7 @@ app.MapGet("/api/dogs", () =>
     {
         var walker = walkers.FirstOrDefault(w => w.Id == d.WalkerId);
         var city = cities.FirstOrDefault(c => c.Id == d.CityId);
-        
+
         return new DogDTO
         {
             Id = d.Id,
@@ -92,7 +102,7 @@ app.MapGet("/api/dogs", () =>
             {
                 Id = walker.Id,
                 Name = walker.Name,
-                
+
             },
             City = city == null ? null : new CityDTO
             {
@@ -115,7 +125,7 @@ app.MapGet("/api/dogs/{id}", (int id) =>
 
     var walker = walkers.FirstOrDefault(w => w.Id == dog.WalkerId);
     var city = cities.FirstOrDefault(c => c.Id == dog.CityId);
-   
+
 
     return Results.Ok(new DogDTO
     {
@@ -126,7 +136,7 @@ app.MapGet("/api/dogs/{id}", (int id) =>
         {
             Id = walker.Id,
             Name = walker.Name,
-           
+
         },
         CityId = dog.CityId,
         City = city == null ? null : new CityDTO
@@ -137,5 +147,36 @@ app.MapGet("/api/dogs/{id}", (int id) =>
     });
 });
 
+// Post new dog to database
+app.MapPost("/api/dogs", (Dog dog) =>
+{
+    // Assigns Id to new order
+    dog.Id = dogs.Max(d => d.Id) + 1;
+
+    dogs.Add(dog);
+
+    var walker = walkers.FirstOrDefault(w => w.Id == dog.WalkerId);
+    var city = cities.FirstOrDefault(c => c.Id == dog.CityId);
+
+    return Results.Created($"/dogs/{dog.Id}", new DogDTO
+    {
+        Id = dog.Id,
+        Name = dog.Name,
+        WalkerId = dog.WalkerId,
+        CityId = dog.CityId,
+        Walker = walker == null ? null : new WalkerDTO
+        {
+            Id = walker.Id,
+            Name = walker.Name,
+
+        },
+        City = city == null ? null : new CityDTO
+        {
+            Id = city.Id,
+            Name = city.Name,
+        }
+
+    });
+});
 
 app.Run();
