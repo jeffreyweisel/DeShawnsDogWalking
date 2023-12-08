@@ -29,9 +29,16 @@
 
 .head {
   font-weight: bolder;
-  font-size: larger;
+  font-size: 28px;
+  margin-bottom: 8px;
 }
 
+.city-name {
+  font-weight: bold;
+  font-size: large;
+  margin-bottom: 8px;
+
+}
 .newDog-btn button {
   padding: 10px;
   border-radius: 5px;

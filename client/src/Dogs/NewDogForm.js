@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { addNewDog, getCities } from "../Services/DogService";
 
-
 export const NewDogForm = () => {
   const navigate = useNavigate();
 
@@ -33,7 +32,8 @@ export const NewDogForm = () => {
       console.log("Clicked");
 
       addNewDog(newDog).then((newDog) => {
-        navigate((`/details/${newDog.id}`));
+        navigate(`/details/${newDog.id}`);
+        console.log(newDog)
       });
     }
   };

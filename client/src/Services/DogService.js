@@ -11,14 +11,15 @@ export const getDogsById = async (id) => {
 };
 
 // Add dog
-export const addNewDog = (newDog) => {
-  return fetch("/api/dogs", {
+export const addNewDog = async (newDog) => {
+  const res = await fetch("/api/dogs", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(newDog),
-  }).then((res) => res.json());
+  });
+  return await res.json();
 };
 
 // Get all cities
