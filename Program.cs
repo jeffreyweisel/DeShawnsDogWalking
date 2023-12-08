@@ -41,12 +41,18 @@ List<City> cities = new()
 
 };
 
-// List of walkerCities
-// List<WalkerCities> walkerCities = new()
-// {
-//     new() { Id = 1, CityId = 1, WalkerId = 1},
-//     new() { Id = 2, CityId = 2, WalkerId = 1},
-// };
+//List of walkerCities
+List<WalkerCities> walkerCities = new()
+{
+    new() { Id = 1, CityId = 1, WalkerId = 1},
+    new() { Id = 2, CityId = 2, WalkerId = 2},
+    new() { Id = 3, CityId = 3, WalkerId = 3},
+    new() { Id = 4, CityId = 4, WalkerId = 4},
+    new() { Id = 5, CityId = 1, WalkerId = 5},
+    new() { Id = 6, CityId = 2, WalkerId = 6},
+    new() { Id = 7, CityId = 2, WalkerId = 7},
+    new() { Id = 8, CityId = 2, WalkerId = 1},
+};
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,6 +85,47 @@ app.MapGet("/api/cities", () =>
     {
         Id = c.Id,
         Name = c.Name
+    });
+});
+
+// Get walkers
+app.MapGet("/api/walkers", () =>
+{
+    return walkers.Select(w => new CityDTO
+    {
+        Id = w.Id,
+        Name = w.Name
+    });
+});
+
+// Get walkerCities w properties fully expanded
+app.MapGet("/api/walkercities", () =>
+{
+    return walkerCities
+    .Select(wC =>
+    {
+        var walker = walkers.FirstOrDefault(w => w.Id == wC.WalkerId);
+        var city = cities.FirstOrDefault(c => c.Id == wC.CityId);
+
+        return new WalkerCitiesDTO
+        {
+            Id = wC.Id,
+            
+            WalkerId = wC.WalkerId,
+            CityId = wC.CityId,
+
+            Walker = walker == null ? null : new WalkerDTO
+            {
+                Id = walker.Id,
+                Name = walker.Name,
+
+            },
+            City = city == null ? null : new CityDTO
+            {
+                Id = city.Id,
+                Name = city.Name,
+            }
+        };
     });
 });
 
