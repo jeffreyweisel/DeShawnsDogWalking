@@ -51,4 +51,9 @@ export const assignWalkerToDog = (updatedDog) => {
   }).then((response) => response.json());
 };
 
- 
+//Delete Dog
+export const deleteDog = (dogId) => {
+  return fetch(`/api/dogs/${dogId}`, {
+    method: "DELETE",
+  });
+};

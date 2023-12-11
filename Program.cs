@@ -259,5 +259,21 @@ app.MapPut("/api/dogs/{id}", (int id, Dog dog) =>
    return Results.Ok(dogToUpdate);
 });
 
+// DELETE dog
+app.MapDelete("/api/dogs/{id}", (int id) =>
+{
+    // Find the service ticket by ID
+    Dog dogToDelete = dogs.FirstOrDefault(d => d.Id == id);
+
+    if (dogToDelete == null)
+    {
+        return Results.NotFound();
+    }
+
+    // Remove the service ticket from list
+    dogs.Remove(dogToDelete);
+
+    return Results.Ok(dogToDelete);
+});
 
 app.Run();
