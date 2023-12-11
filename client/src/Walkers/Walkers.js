@@ -1,26 +1,20 @@
 import { useEffect, useState } from "react";
 import "../Dogs/Dogs.css";
-import { getGreeting } from "../apiManager";
 import { getWalkerCities, getWalkers } from "../Services/WalkerService";
-import { getCities } from "../Services/DogService";
+import { assignWalkerToDog, getCities, getDogs } from "../Services/DogService";
+import { useNavigate } from "react-router-dom";
 
 export const Walkers = () => {
-  const [greeting, setGreeting] = useState({
-    message: "Not Connected to the API",
-  });
+  const navigate = useNavigate()
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
   const [filteredWalkers, setFilteredWalkers] = useState([]);
   const [walkersInCity, setWalkerInCity] = useState([]);
   const [walkers, setWalkers] = useState([]);
-
-  useEffect(() => {
-    getGreeting()
-      .then(setGreeting)
-      .catch(() => {
-        console.log("API not connected");
-      });
-  }, []);
+  const [dogs, setDogs] = useState([]);
+  const [availableDogsInCity, setAvailableDogsInCity] = useState([]);
+  const [selectedWalker, setSelectedWalker] = useState(null);
+  
 
   useEffect(() => {
     getWalkers().then((wArray) => {
@@ -42,6 +36,12 @@ export const Walkers = () => {
   }, []);
 
   useEffect(() => {
+    getDogs().then((dArray) => {
+      setDogs(dArray);
+    });
+  }, []);
+
+  useEffect(() => {
     if (selectedCity) {
       const foundWalkers = walkersInCity
         .filter((wC) => wC.cityId == selectedCity)
@@ -53,9 +53,37 @@ export const Walkers = () => {
     }
   }, [selectedCity, walkers]);
 
+
+  useEffect(() => {
+    
+    
+  }, [dogs, selectedCity]);
+  
+  const showAvailableDogs = (index) => {
+    const dogsInCityAndNotAssigned = dogs.filter(
+      (d) => d.walkerId == null && d.cityId == selectedCity && d.walker != index
+    );
+    console.log("available dogs in city", dogsInCityAndNotAssigned);
+    setAvailableDogsInCity(dogsInCityAndNotAssigned);
+    setSelectedWalker(index);
+  };
+  
+  const handleDogAssignment = (updatedDog) => {
+    const gettingAssigned = {
+      id: updatedDog.id,
+      name: updatedDog.name,
+      cityId: updatedDog.cityId,
+      walkerId: selectedWalker
+    }
+    assignWalkerToDog(gettingAssigned).then((res) => {
+     console.log('assigned dog', gettingAssigned)
+      navigate(`/details/${updatedDog.id}`)
+    })
+  }
+
+
   return (
     <div>
-      <p>{greeting.message}</p>
       <div className="list-container">
         <div className="city-search">
           <select
@@ -75,12 +103,26 @@ export const Walkers = () => {
           </select>
         </div>
       </div>
-      <div className="card-list">
-        {filteredWalkers.map((walker, index) => (
-          <div key={index} className="card">
-            <h3>{walker.name}</h3>
-          </div>
-        ))}
+
+      <div>
+        <div className="card-list">
+          {filteredWalkers.map((w) => (
+            <div key={w.id} className="card">
+              <h3>{w.name}</h3>
+              <div>
+                <button onClick={() => showAvailableDogs(w.id)}>Add Dog</button>
+              </div>
+              {/* Display the available dog names */}
+              {selectedWalker == w.id && (
+                <ul>
+                  {availableDogsInCity.map((dC) => (
+                    <li key={dC.id} onClick={() => handleDogAssignment(dC)}>{dC.name}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
