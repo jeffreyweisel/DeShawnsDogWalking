@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getDogs } from "../Services/DogService";
+import { deleteDog, getDogs } from "../Services/DogService";
 import "./Dogs.css";
 import { Link, useNavigate } from "react-router-dom";
 import { getGreeting } from "../apiManager";
@@ -26,6 +26,14 @@ export const Home = () => {
     });
   }, []);
 
+  const handleDelete = (dog) => {
+    deleteDog(dog.id)
+      .then(() => {
+        // Update the UI by removing the deleted dog from the state
+        setDogs((notDeletedDogs) => notDeletedDogs.filter((d) => d.id !== dog.id));
+      })
+  };
+
   return (
     <div className="list-container">
       <p>{greeting.message}</p>
@@ -38,6 +46,10 @@ export const Home = () => {
             <Link to={`/details/${d.id}`}>
               <h3>{d.name}</h3>
             </Link>
+            <button
+            onClick={() => {handleDelete(d)}}>
+              Remove
+            </button>
           </div>
         ))}
       </div>
