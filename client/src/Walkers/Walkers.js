@@ -112,7 +112,6 @@ export const Walkers = () => {
               <div>
                 <button onClick={() => showAvailableDogs(w.id)}>Add Dog</button>
               </div>
-              {/* Display the available dog names */}
               {selectedWalker == w.id && (
                 <ul>
                   {availableDogsInCity.map((dC) => (
