@@ -28,6 +28,18 @@ export const getCities = async () => {
   return res.json();
 };
 
+// Add city
+export const addNewCity = async (newCity) => {
+  const res = await fetch("/api/cities", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newCity),
+  });
+  return await res.json();
+};
+
 // Assign walker to dog
 export const assignWalkerToDog = (updatedDog) => {
   return fetch(`/api/dogs/${updatedDog.id}`, {

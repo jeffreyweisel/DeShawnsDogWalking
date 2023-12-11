@@ -88,6 +88,22 @@ app.MapGet("/api/cities", () =>
     });
 });
 
+// POST new city
+app.MapPost("/api/cities", (City city) =>
+{
+    // Assigns Id to new order
+    city.Id = cities.Max(c => c.Id) + 1;
+
+    cities.Add(city);
+
+
+    return Results.Created($"/cities/{city.Id}", new CityDTO
+    {
+        Id = city.Id,
+        Name = city.Name,
+
+    });
+});
 // Get walkers
 app.MapGet("/api/walkers", () =>
 {
