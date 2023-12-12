@@ -114,6 +114,22 @@ app.MapGet("/api/walkers", () =>
     });
 });
 
+// DELETE walker
+app.MapDelete("/api/walkers/{id}", (int id) =>
+{
+    // Find the service ticket by ID
+    Walker walkerToDelete = walkers.FirstOrDefault(w => w.Id == id);
+
+    if (walkerToDelete == null)
+    {
+        return Results.NotFound();
+    }
+
+    // Remove the service ticket from list
+    walkers.Remove(walkerToDelete);
+
+    return Results.Ok(walkerToDelete);
+});
 // Get walkerCities w properties fully expanded
 app.MapGet("/api/walkercities", () =>
 {
