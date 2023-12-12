@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import "../Dogs/Dogs.css";
-import { getWalkerCities, getWalkers } from "../Services/WalkerService";
+import {
+  deleteWalker,
+  getWalkerCities,
+  getWalkers,
+} from "../Services/WalkerService";
 import { assignWalkerToDog, getCities, getDogs } from "../Services/DogService";
 import { useNavigate } from "react-router-dom";
 
 export const Walkers = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
   const [filteredWalkers, setFilteredWalkers] = useState([]);
@@ -14,13 +18,16 @@ export const Walkers = () => {
   const [dogs, setDogs] = useState([]);
   const [availableDogsInCity, setAvailableDogsInCity] = useState([]);
   const [selectedWalker, setSelectedWalker] = useState(null);
-  
 
   useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = () => {
     getWalkers().then((wArray) => {
       setWalkers(wArray);
     });
-  }, []);
+  };
 
   useEffect(() => {
     getCities().then((cArray) => {
@@ -33,13 +40,14 @@ export const Walkers = () => {
       setWalkerInCity(wCArray);
       console.log(wCArray);
     });
-  }, []);
+  }, [walkers]);
 
   useEffect(() => {
     getDogs().then((dArray) => {
       setDogs(dArray);
     });
   }, []);
+
 
   useEffect(() => {
     if (selectedCity) {
@@ -51,36 +59,42 @@ export const Walkers = () => {
     } else {
       setFilteredWalkers(walkers);
     }
-  }, [selectedCity, walkers]);
+  }, [selectedCity, walkers, walkersInCity]);
 
+  useEffect(() => {}, [walkers, selectedCity]);
 
-  useEffect(() => {
-    
-    
-  }, [dogs, selectedCity]);
-  
   const showAvailableDogs = (index) => {
     const dogsInCityAndNotAssigned = dogs.filter(
-      (d) => d.walkerId == null && d.cityId == selectedCity && d.walker != index
+      (d) =>
+        d.walkerId == null && d.cityId == selectedCity && d.walkerId != index
     );
     console.log("available dogs in city", dogsInCityAndNotAssigned);
     setAvailableDogsInCity(dogsInCityAndNotAssigned);
     setSelectedWalker(index);
   };
-  
+
   const handleDogAssignment = (updatedDog) => {
     const gettingAssigned = {
       id: updatedDog.id,
       name: updatedDog.name,
       cityId: updatedDog.cityId,
-      walkerId: selectedWalker
-    }
+      walkerId: selectedWalker,
+    };
     assignWalkerToDog(gettingAssigned).then((res) => {
-     console.log('assigned dog', gettingAssigned)
-      navigate(`/details/${updatedDog.id}`)
-    })
-  }
+      console.log("assigned dog", gettingAssigned);
+      navigate(`/details/${updatedDog.id}`);
+    });
+  };
 
+  const handleDelete = async (walker) => {
+    try {
+      await deleteWalker(walker.id);
+      // Instead of calling getData immediately, update the state directly
+      setWalkers((prevWalkers) => prevWalkers.filter((w) => w.id !== walker.id));
+    } catch (error) {
+      console.error("Error deleting walker:", error);
+    }
+  };
 
   return (
     <div>
@@ -103,24 +117,42 @@ export const Walkers = () => {
           </select>
         </div>
       </div>
-
       <div>
         <div className="card-list">
-          {filteredWalkers.map((w) => (
-            <div key={w.id} className="card">
-              <h3>{w.name}</h3>
-              <div>
-                <button onClick={() => showAvailableDogs(w.id)}>Add Dog</button>
+          {filteredWalkers
+            .filter((w) => w && w.id)
+            .map((w) => (
+              <div key={w.id} className="card">
+                <h3>{w?.name}</h3>
+                
+                  <div>
+                    <button
+                      onClick={() => {
+                        handleDelete(w);
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                
+                {selectedCity !== "" && (
+                  <div>
+                    <button onClick={() => showAvailableDogs(w.id)}>
+                      Add Dog
+                    </button>
+                  </div>
+                )}
+                {selectedWalker == w.id && (
+                  <ul>
+                    {availableDogsInCity.map((dC) => (
+                      <li key={dC.id} onClick={() => handleDogAssignment(dC)}>
+                        {dC?.name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
-              {selectedWalker == w.id && (
-                <ul>
-                  {availableDogsInCity.map((dC) => (
-                    <li key={dC.id} onClick={() => handleDogAssignment(dC)}>{dC.name}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     </div>
