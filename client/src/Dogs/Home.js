@@ -29,7 +29,7 @@ export const Home = () => {
   const handleDelete = (dog) => {
     deleteDog(dog.id)
       .then(() => {
-        // Update the UI by removing the deleted dog from the state
+        // Update by removing the deleted dog from the state
         setDogs((notDeletedDogs) => notDeletedDogs.filter((d) => d.id !== dog.id));
       })
   };

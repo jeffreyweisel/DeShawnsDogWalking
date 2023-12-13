@@ -10,7 +10,7 @@ export const NewDogForm = () => {
 
   const [newDog, setNewDog] = useState({
     name: "",
-    walkerId: 0,
+    walkerId: null,
     cityId: 0,
   });
 
@@ -33,7 +33,7 @@ export const NewDogForm = () => {
 
       addNewDog(newDog).then((newDog) => {
         navigate(`/details/${newDog.id}`);
-        console.log(newDog)
+        console.log('new dog', newDog)
       });
     }
   };
