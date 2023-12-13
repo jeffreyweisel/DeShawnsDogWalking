@@ -6,7 +6,7 @@ import {
   getWalkers,
 } from "../Services/WalkerService";
 import { assignWalkerToDog, getCities, getDogs } from "../Services/DogService";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const Walkers = () => {
   const navigate = useNavigate();
@@ -66,7 +66,7 @@ export const Walkers = () => {
   const showAvailableDogs = (index) => {
     const dogsInCityAndNotAssigned = dogs.filter(
       (d) =>
-        d.walkerId == null && d.cityId == selectedCity && d.walkerId != index
+        d.walkerId == null && d.cityId == selectedCity 
     );
     console.log("available dogs in city", dogsInCityAndNotAssigned);
     setAvailableDogsInCity(dogsInCityAndNotAssigned);
@@ -123,7 +123,9 @@ export const Walkers = () => {
             .filter((w) => w && w.id)
             .map((w) => (
               <div key={w.id} className="card">
-                <h3>{w?.name}</h3>
+             <Link to={`/walkers/${w.id}`}>
+              <h3>{w.name}</h3>
+            </Link>
                 
                   <div>
                     <button

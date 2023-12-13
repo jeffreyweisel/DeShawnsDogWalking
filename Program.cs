@@ -45,13 +45,22 @@ List<City> cities = new()
 List<WalkerCities> walkerCities = new()
 {
     new() { Id = 1, CityId = 1, WalkerId = 1},
-    new() { Id = 2, CityId = 2, WalkerId = 2},
-    new() { Id = 3, CityId = 3, WalkerId = 3},
-    new() { Id = 4, CityId = 4, WalkerId = 4},
-    new() { Id = 5, CityId = 1, WalkerId = 5},
-    new() { Id = 6, CityId = 2, WalkerId = 6},
-    new() { Id = 7, CityId = 2, WalkerId = 7},
-    new() { Id = 8, CityId = 2, WalkerId = 1},
+    new() { Id = 2, CityId = 2, WalkerId = 1},
+    new() { Id = 3, CityId = 3, WalkerId = 1},
+    new() { Id = 4, CityId = 4, WalkerId = 2},
+    new() { Id = 5, CityId = 1, WalkerId = 2},
+    new() { Id = 6, CityId = 2, WalkerId = 2},
+    new() { Id = 7, CityId = 3, WalkerId = 3},
+    new() { Id = 8, CityId = 4, WalkerId = 3},
+    new() { Id = 9, CityId = 1, WalkerId = 4},
+    new() { Id = 11, CityId = 3, WalkerId = 5},
+    new() { Id = 12, CityId = 4, WalkerId = 5},
+    new() { Id = 13, CityId = 1, WalkerId = 6},
+    new() { Id = 14, CityId = 2, WalkerId = 6},
+    new() { Id = 15, CityId = 4, WalkerId = 7},
+    new() { Id = 16, CityId = 1, WalkerId = 7},
+    new() { Id = 17, CityId = 2, WalkerId = 7},
+    
 };
 
 var builder = WebApplication.CreateBuilder(args);
@@ -130,6 +139,69 @@ app.MapDelete("/api/walkers/{id}", (int id) =>
 
     return Results.Ok(walkerToDelete);
 });
+
+// Get walkers by Id to show details
+app.MapGet("/api/walkers/{id}", (int id) =>
+{
+    Walker walker = walkers.FirstOrDefault(w => w.Id == id);
+
+    if (walker == null)
+    {
+        return Results.NotFound();
+    }
+
+
+    return Results.Ok(new WalkerDTO
+    {
+        Id = walker.Id,
+        Name = walker.Name,
+        
+    });
+});
+
+// Edit city that walker walks in
+app.MapPut("/api/walkers/{id}", (int id, Walker updatedWalker) =>
+{
+    // updates walkerCities
+    var walkersCities = walkerCities.Where(wc => wc.WalkerId != updatedWalker.Id).ToList();
+    // List<WalkerCities> matchingCities = walkerCities.Where(wc => wc.WalkerId == updatedWalker.Id).ToList();
+
+
+    foreach (City city in updatedWalker.Cities)
+    {
+        WalkerCities newWC = new WalkerCities
+        {
+            WalkerId = updatedWalker.Id,
+            CityId = city.Id,
+        };
+        newWC.Id = walkersCities.Count > 0 ? walkersCities.Max(wc => wc.Id) + 1 : 1;
+        walkersCities.Add(newWC);
+    }
+
+    walkerCities = walkersCities;
+
+    // updates the walker object 
+    Walker walkerToUpdate = walkers.FirstOrDefault(w => w.Id == id);
+
+    if (walkerToUpdate == null)
+    {
+        return Results.NotFound();
+    }
+    if (id != updatedWalker.Id)
+    {
+        return Results.BadRequest();
+    }
+
+    walkerToUpdate.Id = updatedWalker.Id;
+    walkerToUpdate.Name = updatedWalker.Name;
+    walkerToUpdate.Cities = updatedWalker.Cities;
+
+    return Results.Ok(walkerToUpdate);
+
+});
+
+
+
 // Get walkerCities w properties fully expanded
 app.MapGet("/api/walkercities", () =>
 {
